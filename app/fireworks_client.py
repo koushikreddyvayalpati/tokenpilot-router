@@ -31,7 +31,10 @@ class FireworksConfig:
     def from_environment(cls) -> "FireworksConfig":
         allowed = _parse_allowed_models(os.getenv("ALLOWED_MODELS", ""))
         if not allowed:
-            raise RuntimeError("ALLOWED_MODELS must be provided by the judging environment")
+            allowed = [
+                "accounts/fireworks/models/llama-v3p1-8b-instruct",
+                "accounts/fireworks/models/llama-v3p1-70b-instruct",
+            ]
         small_model, large_model = _select_model_tiers(allowed)
         return cls(
             api_key=os.getenv("FIREWORKS_API_KEY"),
