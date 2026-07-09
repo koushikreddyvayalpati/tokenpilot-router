@@ -1,0 +1,666 @@
+[
+  {
+    "id": "q023",
+    "category": "math_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 223,
+    "expensive_correct": true,
+    "expensive_tokens": 261
+  },
+  {
+    "id": "q013",
+    "category": "math_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 147,
+    "expensive_correct": true,
+    "expensive_tokens": 226
+  },
+  {
+    "id": "q045",
+    "category": "code_debugging",
+    "cheap_correct": true,
+    "cheap_tokens": 386,
+    "expensive_correct": true,
+    "expensive_tokens": 317
+  },
+  {
+    "id": "q034",
+    "category": "text_summarization",
+    "cheap_correct": true,
+    "cheap_tokens": 259,
+    "expensive_correct": true,
+    "expensive_tokens": 546
+  },
+  {
+    "id": "q063",
+    "category": "code_generation",
+    "cheap_correct": true,
+    "cheap_tokens": 358,
+    "expensive_correct": true,
+    "expensive_tokens": 361
+  },
+  {
+    "id": "q025",
+    "category": "sentiment_classification",
+    "cheap_correct": true,
+    "cheap_tokens": 197,
+    "expensive_correct": true,
+    "expensive_tokens": 253
+  },
+  {
+    "id": "q027",
+    "category": "sentiment_classification",
+    "cheap_correct": true,
+    "cheap_tokens": 192,
+    "expensive_correct": true,
+    "expensive_tokens": 286
+  },
+  {
+    "id": "q062",
+    "category": "code_generation",
+    "cheap_correct": true,
+    "cheap_tokens": 379,
+    "expensive_correct": true,
+    "expensive_tokens": 450
+  },
+  {
+    "id": "q039",
+    "category": "named_entity_recognition",
+    "cheap_correct": true,
+    "cheap_tokens": 199,
+    "expensive_correct": true,
+    "expensive_tokens": 315
+  },
+  {
+    "id": "q055",
+    "category": "logical_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 174,
+    "expensive_correct": true,
+    "expensive_tokens": 182
+  },
+  {
+    "id": "q049",
+    "category": "code_debugging",
+    "cheap_correct": true,
+    "cheap_tokens": 497,
+    "expensive_correct": true,
+    "expensive_tokens": 520
+  },
+  {
+    "id": "q008",
+    "category": "factual_knowledge",
+    "cheap_correct": true,
+    "cheap_tokens": 200,
+    "expensive_correct": true,
+    "expensive_tokens": 172
+  },
+  {
+    "id": "q047",
+    "category": "code_debugging",
+    "cheap_correct": true,
+    "cheap_tokens": 482,
+    "expensive_correct": true,
+    "expensive_tokens": 462
+  },
+  {
+    "id": "q057",
+    "category": "logical_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 245,
+    "expensive_correct": true,
+    "expensive_tokens": 229
+  },
+  {
+    "id": "q016",
+    "category": "math_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 138,
+    "expensive_correct": true,
+    "expensive_tokens": 168
+  },
+  {
+    "id": "q056",
+    "category": "logical_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 474,
+    "expensive_correct": true,
+    "expensive_tokens": 542
+  },
+  {
+    "id": "q032",
+    "category": "text_summarization",
+    "cheap_correct": true,
+    "cheap_tokens": 191,
+    "expensive_correct": true,
+    "expensive_tokens": 212
+  },
+  {
+    "id": "q033",
+    "category": "text_summarization",
+    "cheap_correct": true,
+    "cheap_tokens": 288,
+    "expensive_correct": false,
+    "expensive_tokens": 567
+  },
+  {
+    "id": "q012",
+    "category": "math_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 145,
+    "expensive_correct": true,
+    "expensive_tokens": 109
+  },
+  {
+    "id": "q007",
+    "category": "factual_knowledge",
+    "cheap_correct": true,
+    "cheap_tokens": 234,
+    "expensive_correct": true,
+    "expensive_tokens": 290
+  },
+  {
+    "id": "q043",
+    "category": "named_entity_recognition",
+    "cheap_correct": true,
+    "cheap_tokens": 234,
+    "expensive_correct": true,
+    "expensive_tokens": 397
+  },
+  {
+    "id": "q059",
+    "category": "logical_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 392,
+    "expensive_correct": true,
+    "expensive_tokens": 269
+  },
+  {
+    "id": "q006",
+    "category": "factual_knowledge",
+    "cheap_correct": true,
+    "cheap_tokens": 203,
+    "expensive_correct": true,
+    "expensive_tokens": 295
+  },
+  {
+    "id": "q001",
+    "category": "factual_knowledge",
+    "cheap_correct": true,
+    "cheap_tokens": 207,
+    "expensive_correct": true,
+    "expensive_tokens": 423
+  },
+  {
+    "id": "q015",
+    "category": "math_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 147,
+    "expensive_correct": true,
+    "expensive_tokens": 214
+  },
+  {
+    "id": "q051",
+    "category": "code_debugging",
+    "cheap_correct": true,
+    "cheap_tokens": 427,
+    "expensive_correct": true,
+    "expensive_tokens": 474
+  },
+  {
+    "id": "q052",
+    "category": "logical_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 248,
+    "expensive_correct": true,
+    "expensive_tokens": 312
+  },
+  {
+    "id": "q040",
+    "category": "named_entity_recognition",
+    "cheap_correct": true,
+    "cheap_tokens": 221,
+    "expensive_correct": true,
+    "expensive_tokens": 353
+  },
+  {
+    "id": "q011",
+    "category": "factual_knowledge",
+    "cheap_correct": true,
+    "cheap_tokens": 260,
+    "expensive_correct": true,
+    "expensive_tokens": 459
+  },
+  {
+    "id": "q014",
+    "category": "math_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 146,
+    "expensive_correct": true,
+    "expensive_tokens": 217
+  },
+  {
+    "id": "q000",
+    "category": "factual_knowledge",
+    "cheap_correct": true,
+    "cheap_tokens": 181,
+    "expensive_correct": true,
+    "expensive_tokens": 267
+  },
+  {
+    "id": "q046",
+    "category": "code_debugging",
+    "cheap_correct": true,
+    "cheap_tokens": 375,
+    "expensive_correct": true,
+    "expensive_tokens": 382
+  },
+  {
+    "id": "q024",
+    "category": "sentiment_classification",
+    "cheap_correct": true,
+    "cheap_tokens": 187,
+    "expensive_correct": true,
+    "expensive_tokens": 281
+  },
+  {
+    "id": "q018",
+    "category": "math_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 240,
+    "expensive_correct": true,
+    "expensive_tokens": 387
+  },
+  {
+    "id": "q028",
+    "category": "sentiment_classification",
+    "cheap_correct": true,
+    "cheap_tokens": 206,
+    "expensive_correct": true,
+    "expensive_tokens": 285
+  },
+  {
+    "id": "q019",
+    "category": "math_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 227,
+    "expensive_correct": true,
+    "expensive_tokens": 272
+  },
+  {
+    "id": "q003",
+    "category": "factual_knowledge",
+    "cheap_correct": true,
+    "cheap_tokens": 223,
+    "expensive_correct": true,
+    "expensive_tokens": 423
+  },
+  {
+    "id": "q041",
+    "category": "named_entity_recognition",
+    "cheap_correct": true,
+    "cheap_tokens": 221,
+    "expensive_correct": true,
+    "expensive_tokens": 395
+  },
+  {
+    "id": "q030",
+    "category": "text_summarization",
+    "cheap_correct": true,
+    "cheap_tokens": 196,
+    "expensive_correct": true,
+    "expensive_tokens": 260
+  },
+  {
+    "id": "q017",
+    "category": "math_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 145,
+    "expensive_correct": true,
+    "expensive_tokens": 176
+  },
+  {
+    "id": "q005",
+    "category": "factual_knowledge",
+    "cheap_correct": true,
+    "cheap_tokens": 217,
+    "expensive_correct": true,
+    "expensive_tokens": 483
+  },
+  {
+    "id": "q054",
+    "category": "logical_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 247,
+    "expensive_correct": true,
+    "expensive_tokens": 288
+  },
+  {
+    "id": "q029",
+    "category": "sentiment_classification",
+    "cheap_correct": true,
+    "cheap_tokens": 204,
+    "expensive_correct": true,
+    "expensive_tokens": 354
+  },
+  {
+    "id": "q037",
+    "category": "named_entity_recognition",
+    "cheap_correct": true,
+    "cheap_tokens": 202,
+    "expensive_correct": true,
+    "expensive_tokens": 277
+  },
+  {
+    "id": "q058",
+    "category": "logical_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 302,
+    "expensive_correct": true,
+    "expensive_tokens": 330
+  },
+  {
+    "id": "q038",
+    "category": "named_entity_recognition",
+    "cheap_correct": true,
+    "cheap_tokens": 199,
+    "expensive_correct": true,
+    "expensive_tokens": 275
+  },
+  {
+    "id": "q022",
+    "category": "math_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 321,
+    "expensive_correct": true,
+    "expensive_tokens": 341
+  },
+  {
+    "id": "q044",
+    "category": "code_debugging",
+    "cheap_correct": true,
+    "cheap_tokens": 379,
+    "expensive_correct": true,
+    "expensive_tokens": 307
+  },
+  {
+    "id": "q060",
+    "category": "code_generation",
+    "cheap_correct": true,
+    "cheap_tokens": 226,
+    "expensive_correct": true,
+    "expensive_tokens": 303
+  },
+  {
+    "id": "q020",
+    "category": "math_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 224,
+    "expensive_correct": true,
+    "expensive_tokens": 262
+  },
+  {
+    "id": "q050",
+    "category": "code_debugging",
+    "cheap_correct": true,
+    "cheap_tokens": 579,
+    "expensive_correct": true,
+    "expensive_tokens": 527
+  },
+  {
+    "id": "q036",
+    "category": "named_entity_recognition",
+    "cheap_correct": true,
+    "cheap_tokens": 203,
+    "expensive_correct": true,
+    "expensive_tokens": 320
+  },
+  {
+    "id": "q035",
+    "category": "text_summarization",
+    "cheap_correct": false,
+    "cheap_tokens": 246,
+    "expensive_correct": true,
+    "expensive_tokens": 390
+  },
+  {
+    "id": "q061",
+    "category": "code_generation",
+    "cheap_correct": true,
+    "cheap_tokens": 236,
+    "expensive_correct": true,
+    "expensive_tokens": 409
+  },
+  {
+    "id": "q004",
+    "category": "factual_knowledge",
+    "cheap_correct": true,
+    "cheap_tokens": 176,
+    "expensive_correct": true,
+    "expensive_tokens": 202
+  },
+  {
+    "id": "q042",
+    "category": "named_entity_recognition",
+    "cheap_correct": true,
+    "cheap_tokens": 221,
+    "expensive_correct": true,
+    "expensive_tokens": 410
+  },
+  {
+    "id": "q002",
+    "category": "factual_knowledge",
+    "cheap_correct": true,
+    "cheap_tokens": 205,
+    "expensive_correct": true,
+    "expensive_tokens": 279
+  },
+  {
+    "id": "q026",
+    "category": "sentiment_classification",
+    "cheap_correct": true,
+    "cheap_tokens": 191,
+    "expensive_correct": true,
+    "expensive_tokens": 260
+  },
+  {
+    "id": "q031",
+    "category": "text_summarization",
+    "cheap_correct": true,
+    "cheap_tokens": 196,
+    "expensive_correct": true,
+    "expensive_tokens": 241
+  },
+  {
+    "id": "q009",
+    "category": "factual_knowledge",
+    "cheap_correct": true,
+    "cheap_tokens": 216,
+    "expensive_correct": true,
+    "expensive_tokens": 352
+  },
+  {
+    "id": "q021",
+    "category": "math_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 214,
+    "expensive_correct": true,
+    "expensive_tokens": 319
+  },
+  {
+    "id": "q048",
+    "category": "code_debugging",
+    "cheap_correct": true,
+    "cheap_tokens": 424,
+    "expensive_correct": true,
+    "expensive_tokens": 264
+  },
+  {
+    "id": "q010",
+    "category": "factual_knowledge",
+    "cheap_correct": true,
+    "cheap_tokens": 198,
+    "expensive_correct": true,
+    "expensive_tokens": 223
+  },
+  {
+    "id": "q053",
+    "category": "logical_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 211,
+    "expensive_correct": true,
+    "expensive_tokens": 284
+  },
+  {
+    "id": "q064",
+    "category": "math_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 228,
+    "expensive_correct": true,
+    "expensive_tokens": 235
+  },
+  {
+    "id": "q065",
+    "category": "math_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 249,
+    "expensive_correct": true,
+    "expensive_tokens": 281
+  },
+  {
+    "id": "q066",
+    "category": "math_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 214,
+    "expensive_correct": true,
+    "expensive_tokens": 358
+  },
+  {
+    "id": "q067",
+    "category": "math_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 221,
+    "expensive_correct": true,
+    "expensive_tokens": 380
+  },
+  {
+    "id": "q068",
+    "category": "logical_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 508,
+    "expensive_correct": true,
+    "expensive_tokens": 486
+  },
+  {
+    "id": "q069",
+    "category": "logical_reasoning",
+    "cheap_correct": true,
+    "cheap_tokens": 464,
+    "expensive_correct": true,
+    "expensive_tokens": 440
+  },
+  {
+    "id": "q070",
+    "category": "code_debugging",
+    "cheap_correct": true,
+    "cheap_tokens": 458,
+    "expensive_correct": true,
+    "expensive_tokens": 336
+  },
+  {
+    "id": "q071",
+    "category": "code_debugging",
+    "cheap_correct": true,
+    "cheap_tokens": 501,
+    "expensive_correct": true,
+    "expensive_tokens": 332
+  },
+  {
+    "id": "q072",
+    "category": "code_debugging",
+    "cheap_correct": true,
+    "cheap_tokens": 359,
+    "expensive_correct": true,
+    "expensive_tokens": 306
+  },
+  {
+    "id": "q073",
+    "category": "code_debugging",
+    "cheap_correct": true,
+    "cheap_tokens": 370,
+    "expensive_correct": true,
+    "expensive_tokens": 336
+  },
+  {
+    "id": "q074",
+    "category": "code_generation",
+    "cheap_correct": true,
+    "cheap_tokens": 367,
+    "expensive_correct": true,
+    "expensive_tokens": 503
+  },
+  {
+    "id": "q075",
+    "category": "code_generation",
+    "cheap_correct": true,
+    "cheap_tokens": 329,
+    "expensive_correct": false,
+    "expensive_tokens": 493
+  },
+  {
+    "id": "q076",
+    "category": "named_entity_recognition",
+    "cheap_correct": true,
+    "cheap_tokens": 281,
+    "expensive_correct": false,
+    "expensive_tokens": 519
+  },
+  {
+    "id": "q077",
+    "category": "named_entity_recognition",
+    "cheap_correct": true,
+    "cheap_tokens": 280,
+    "expensive_correct": true,
+    "expensive_tokens": 485
+  },
+  {
+    "id": "q079",
+    "category": "sentiment_classification",
+    "cheap_correct": false,
+    "cheap_tokens": 207,
+    "expensive_correct": true,
+    "expensive_tokens": 328
+  },
+  {
+    "id": "q080",
+    "category": "text_summarization",
+    "cheap_correct": true,
+    "cheap_tokens": 449,
+    "expensive_correct": false,
+    "expensive_tokens": 540
+  },
+  {
+    "id": "q081",
+    "category": "factual_knowledge",
+    "cheap_correct": true,
+    "cheap_tokens": 231,
+    "expensive_correct": false,
+    "expensive_tokens": 490
+  },
+  {
+    "id": "q082",
+    "category": "factual_knowledge",
+    "cheap_correct": true,
+    "cheap_tokens": 193,
+    "expensive_correct": true,
+    "expensive_tokens": 308
+  },
+  {
+    "id": "q078",
+    "category": "sentiment_classification",
+    "cheap_correct": true,
+    "cheap_tokens": 232,
+    "expensive_correct": true,
+    "expensive_tokens": 369
+  }
+]

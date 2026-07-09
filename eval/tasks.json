@@ -1,0 +1,4 @@
+[
+  {"task_id": "arith-1", "prompt": "What is 17 * 23?"},
+  {"task_id": "arith-2", "prompt": "Calculate (18 + 6) / 3."}
+]

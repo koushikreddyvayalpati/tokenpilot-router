@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.router-cache/
+.venv/
+deck-preview/
+pdf-export/
+*.inspect.ndjson

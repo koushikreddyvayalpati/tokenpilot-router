@@ -1,0 +1,7 @@
+[
+  {"id": "arith-1", "prompt": "What is 17 * 23?", "expected": "391", "min_tier": "local"},
+  {"id": "simple-1", "prompt": "Name the capital of France.", "min_tier": "local"},
+  {"id": "code-1", "prompt": "Write a Python function to deduplicate a list while preserving order.", "min_tier": "small"},
+  {"id": "proof-1", "prompt": "Prove that the sum of the first n odd numbers is n squared.", "min_tier": "large"}
+]
+
