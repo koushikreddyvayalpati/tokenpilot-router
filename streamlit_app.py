@@ -20,11 +20,17 @@ with st.sidebar:
 
 def get_router() -> LangGraphRouter:
     if "router" not in st.session_state:
+        import os
+
         for name in ("FIREWORKS_API_KEY", "FIREWORKS_BASE_URL", "ALLOWED_MODELS"):
             if name in st.secrets:
-                import os
-
                 os.environ[name] = str(st.secrets[name])
+        # Keep deployment simple: the public demo only needs the API key secret.
+        os.environ.setdefault(
+            "ALLOWED_MODELS",
+            "accounts/fireworks/models/llama-v3p1-8b-instruct,"
+            "accounts/fireworks/models/llama-v3p1-70b-instruct",
+        )
         config = FireworksConfig.from_environment()
         client = FireworksClient(config)
         st.session_state.router = LangGraphRouter(client)
