@@ -32,8 +32,11 @@ class FireworksConfig:
         allowed = _parse_allowed_models(os.getenv("ALLOWED_MODELS", ""))
         if not allowed:
             allowed = [
-                "accounts/fireworks/models/llama-v3p1-8b-instruct",
-                "accounts/fireworks/models/llama-v3p1-70b-instruct",
+                "accounts/fireworks/models/minimax-m3",
+                "accounts/fireworks/models/kimi-k2p7-code",
+                "accounts/fireworks/models/gemma-4-31b-it",
+                "accounts/fireworks/models/gemma-4-26b-a4b-it",
+                "accounts/fireworks/models/gemma-4-31b-it-nvfp4",
             ]
         small_model, large_model = _select_model_tiers(allowed)
         return cls(
