@@ -20,8 +20,8 @@ FIREWORKS_BASE_URL = "https://api.fireworks.ai/inference/v1"
 class FireworksConfig:
     api_key: str | None = None
     base_url: str = FIREWORKS_BASE_URL
-    small_model: str = "accounts/fireworks/models/llama-v3p1-8b-instruct"
-    large_model: str = "accounts/fireworks/models/llama-v3p1-70b-instruct"
+    small_model: str = ""
+    large_model: str = ""
     max_completion_tokens: int = 400
     prompt_truncate_len: int = 8_000
     max_retries: int = 2
@@ -31,17 +31,14 @@ class FireworksConfig:
     def from_environment(cls) -> "FireworksConfig":
         allowed = _parse_allowed_models(os.getenv("ALLOWED_MODELS", ""))
         if not allowed:
-            allowed = [
-                "accounts/fireworks/models/minimax-m3",
-                "accounts/fireworks/models/kimi-k2p7-code",
-                "accounts/fireworks/models/gemma-4-31b-it",
-                "accounts/fireworks/models/gemma-4-26b-a4b-it",
-                "accounts/fireworks/models/gemma-4-31b-it-nvfp4",
-            ]
+            raise RuntimeError("ALLOWED_MODELS must be provided by the judging environment")
+        base_url = os.getenv("FIREWORKS_BASE_URL", "").rstrip("/")
+        if not base_url:
+            raise RuntimeError("FIREWORKS_BASE_URL must be provided by the judging environment")
         small_model, large_model = _select_model_tiers(allowed)
         return cls(
             api_key=os.getenv("FIREWORKS_API_KEY"),
-            base_url=os.getenv("FIREWORKS_BASE_URL", FIREWORKS_BASE_URL).rstrip("/"),
+            base_url=base_url,
             small_model=small_model,
             large_model=large_model,
         )

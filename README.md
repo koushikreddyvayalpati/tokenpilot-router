@@ -44,7 +44,7 @@ docker buildx build --platform linux/amd64 -t track1-router .
 docker run --rm \
   -e FIREWORKS_API_KEY="$FIREWORKS_API_KEY" \
   -e FIREWORKS_BASE_URL="https://api.fireworks.ai/inference/v1" \
-  -e ALLOWED_MODELS='["accounts/fireworks/models/your-cheap-model", "accounts/fireworks/models/your-large-model"]' \
+  -e ALLOWED_MODELS="model-id-1,model-id-2" \
   -v "$PWD/eval:/input:ro" \
   -v "$PWD/output:/output" \
   track1-router
