@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 
 from app.models import RouteDecision, Tier
+from app.local_model import can_answer_locally
 
 ARITHMETIC_PATTERN = re.compile(r"^\s*(?:what\s+is|calculate|compute|solve)?\s*[-+*/().\d\s]+\??\s*$", re.IGNORECASE)
 CODE_PATTERN = re.compile(r"\b(write|implement|debug|optimi[sz]e|refactor|python|javascript|sql|function|class|algorithm)\b", re.IGNORECASE)
@@ -19,6 +20,8 @@ def classify_task(task_text: str) -> RouteDecision:
     reasons: list[str] = []
     if ARITHMETIC_PATTERN.match(text) and len(text) <= 80:
         return RouteDecision(tier=Tier.LOCAL, difficulty="easy", reasons=["deterministic arithmetic"])
+    if can_answer_locally(text):
+        return RouteDecision(tier=Tier.LOCAL, difficulty="easy", reasons=["structured deterministic math"])
 
     if PROOF_PATTERN.search(text):
         reasons.append("formal reasoning keyword")

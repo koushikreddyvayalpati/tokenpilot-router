@@ -12,8 +12,8 @@ class ChatMessage(TypedDict):
 
 
 SYSTEM_PROMPT = (
-    "Answer first. Obey requested format and length; under 180 words. No headings, restatement, self-test, optional "
-    "examples, or closing. Use essential equations; for code return only minimal working code."
+    "Answer directly and accurately. Follow the requested format and length. Be concise; do not restate the prompt. "
+    "For code, return only minimal working code."
 )
 
 

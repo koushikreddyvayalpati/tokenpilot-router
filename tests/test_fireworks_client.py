@@ -1,4 +1,5 @@
 import httpx
+import json
 
 from app.fireworks_client import FireworksClient, FireworksConfig
 from app.models import Tier
@@ -44,3 +45,27 @@ def test_client_allows_a_tighter_task_output_cap() -> None:
     client = FireworksClient(FireworksConfig(api_key="test-key"), httpx.Client(transport=httpx.MockTransport(handler)))
     client.complete([{"role": "user", "content": "hello"}], Tier.SMALL, max_tokens=96)
     assert '"max_tokens":96' in captured["body"]
+
+
+def test_client_retries_a_truncated_concise_answer_at_full_budget() -> None:
+    token_limits: list[int] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        token_limits.append(json.loads(request.content)["max_tokens"])
+        if len(token_limits) == 1:
+            return httpx.Response(
+                200,
+                json={"choices": [{"message": {"content": "partial"}, "finish_reason": "length"}], "usage": {"total_tokens": 20}},
+            )
+        return httpx.Response(
+            200,
+            json={"choices": [{"message": {"content": "complete"}, "finish_reason": "stop"}], "usage": {"total_tokens": 35}},
+        )
+
+    client = FireworksClient(FireworksConfig(api_key="test-key"), httpx.Client(transport=httpx.MockTransport(handler)))
+    answer = client.complete([{"role": "user", "content": "hello"}], Tier.SMALL, max_tokens=56)
+
+    assert token_limits == [56, 400]
+    assert answer.answer == "complete"
+    assert answer.token_count == 55
+    assert answer.metadata["retried_after_truncation"] is True

@@ -118,7 +118,17 @@ class FireworksClient:
             "perf_metrics_in_response": True,
         }
         response = self._post_with_retry(payload, conversation_id)
-        payload: dict[str, Any] = response.json()
+        response_payload: dict[str, Any] = response.json()
+        initial_usage = response_payload.get("usage", {})
+        initial_tokens = int(initial_usage.get("total_tokens") or 0)
+        choices = response_payload.get("choices", [])
+        was_truncated = bool(choices and choices[0].get("finish_reason") == "length")
+        retried_after_truncation = was_truncated and token_limit < self.config.max_completion_tokens
+        if retried_after_truncation:
+            payload["max_tokens"] = self.config.max_completion_tokens
+            response = self._post_with_retry(payload, conversation_id)
+            response_payload = response.json()
+        payload = response_payload
         try:
             text = payload["choices"][0]["message"]["content"]
         except (KeyError, IndexError, TypeError) as exc:
@@ -136,12 +146,13 @@ class FireworksClient:
                 or perf_metrics.get("cached-prompt-tokens")
                 or response.headers.get("fireworks-cached-prompt-tokens")
             ),
+            "retried_after_truncation": retried_after_truncation,
         }
         return ModelAnswer(
             answer=text,
             confidence=score_answer(text),
             tier=tier,
-            token_count=int(usage.get("total_tokens") or 0),
+            token_count=(initial_tokens if retried_after_truncation else 0) + int(usage.get("total_tokens") or 0),
             metadata=metadata,
         )
 
