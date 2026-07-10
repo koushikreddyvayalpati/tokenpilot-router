@@ -62,3 +62,15 @@ def test_ast_defined_python_bugs_stay_local() -> None:
 
     off_by_one = answer_locally("Find the bug:\n```python\ndef total(values):\n    total = 0\n    for i in range(1, len(values)):\n        total += values[i]\n    return total\n```")
     assert "skips the first element" in off_by_one.answer
+
+
+def test_fully_determined_ordering_and_box_extreme_stay_local() -> None:
+    runners = answer_locally(
+        "Four runners, Tia, Uma, Vik, and Wes, finished a race with no ties. "
+        "Tia finished before Uma. Wes finished immediately after Vik. Vik finished first. "
+        "What is the finishing order from first to last?"
+    )
+    assert runners.answer == "Vik, Wes, Tia, Uma"
+
+    box = answer_locally("Box A is heavier than box B. Box C is lighter than box B. Which box is the lightest?")
+    assert box.answer == "Box C"

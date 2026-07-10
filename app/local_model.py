@@ -4,6 +4,7 @@ import ast
 import operator
 import re
 from decimal import Decimal, ROUND_HALF_UP
+from itertools import permutations
 
 from app.models import ModelAnswer, Tier
 
@@ -86,6 +87,7 @@ _DATE = r"(?:January|February|March|April|May|June|July|August|September|October
 _POSITIVE_SENTIMENT = {"amazing", "beautiful", "excellent", "fantastic", "gorgeous", "great", "love", "smooth", "wonderful"}
 _NEGATIVE_SENTIMENT = {"awful", "broken", "crashed", "disappointing", "hate", "poor", "smelled", "terrible", "unresponsive", "worst"}
 _SENTIMENT_AMBIGUITY = re.compile(r"\b(?:not|never|no|n't|but|although|however|sarcasm|oh sure|at least)\b", re.IGNORECASE)
+_COUNT_WORDS = "two|three|four|five|six"
 
 
 def _answer_entities(prompt: str) -> str | None:
@@ -177,6 +179,84 @@ def _answer_static_python_bug(prompt: str) -> str | None:
     return None
 
 
+def _ordering_names(prompt: str) -> list[str] | None:
+    patterns = (
+        rf"\b(?:{_COUNT_WORDS})\s+(?:runners|coworkers|colleagues|friends|students)\s*,\s*(.+?),\s*(?:finished|sit|sits|work)",
+        rf"\b(?:{_COUNT_WORDS})\s+(?:runners|coworkers|colleagues|friends|students)\s+(?:sit|work).*?:\s*(.+?)\.",
+    )
+    for pattern in patterns:
+        match = re.search(pattern, prompt, re.IGNORECASE | re.DOTALL)
+        if match:
+            names = re.findall(r"\b[A-Z][a-z]+\b", match.group(1))
+            if 2 <= len(names) <= 6 and len(set(names)) == len(names):
+                return names
+    return None
+
+
+def _answer_ordering_puzzle(prompt: str) -> str | None:
+    names = _ordering_names(prompt)
+    if not names:
+        return None
+    conditions = []
+    lowered = prompt.lower()
+    for order in permutations(names):
+        positions = {name.lower(): index for index, name in enumerate(order)}
+        valid = True
+        for first, immediate, relation, second in re.findall(
+            r"\b([A-Z][a-z]+)\s+(?:finished|sits?|works?)\s+(immediately\s+)?(before|after|left of|right of)\s+([A-Z][a-z]+)",
+            prompt,
+            re.IGNORECASE,
+        ):
+            left, right = positions[first.lower()], positions[second.lower()]
+            before = relation.lower() in {"before", "left of"}
+            if immediate:
+                valid = (left + 1 == right) if before else (right + 1 == left)
+            else:
+                valid = left < right if before else left > right
+            if not valid:
+                break
+        if not valid:
+            continue
+        for name in names:
+            key = name.lower()
+            if re.search(rf"\b{re.escape(name)}\s+(?:finished|sits?)\s+(?:in )?first\b", prompt, re.IGNORECASE) or re.search(
+                rf"\b{re.escape(name)}\s+sits?\s+at the far left\b", prompt, re.IGNORECASE
+            ):
+                if positions[key] != 0:
+                    valid = False
+            if re.search(rf"\b{re.escape(name)}\s+sits?\s+at the far right\b", prompt, re.IGNORECASE):
+                if positions[key] != len(names) - 1:
+                    valid = False
+        if valid:
+            conditions.append(order)
+    if len(conditions) != 1:
+        return None
+    order = conditions[0]
+    if re.search(r"\b(?:order|from first to last)\b", lowered):
+        return ", ".join(order)
+    if "second from the left" in lowered:
+        return order[1]
+    return None
+
+
+def _answer_box_extreme(prompt: str) -> str | None:
+    if not re.search(r"\bwhich box (?:is )?(?:the )?(?:lightest|heaviest)\b", prompt, re.IGNORECASE):
+        return None
+    boxes = set(re.findall(r"\bbox\s+([A-Z])\b", prompt, re.IGNORECASE))
+    edges: set[tuple[str, str]] = set()
+    for first, relation, second in re.findall(r"\bbox\s+([A-Z])\s+is\s+(heavier|lighter)\s+than\s+box\s+([A-Z])", prompt, re.IGNORECASE):
+        first, second = first.upper(), second.upper()
+        edges.add((second, first) if relation.lower() == "heavier" else (first, second))
+    if len(boxes) < 2 or not edges:
+        return None
+    lowered = prompt.lower()
+    if "lightest" in lowered:
+        candidates = boxes - {high for _, high in edges}
+    else:
+        candidates = boxes - {low for low, _ in edges}
+    return f"Box {next(iter(candidates))}" if len(candidates) == 1 else None
+
+
 def _eval_expr(node: ast.AST) -> float:
     if isinstance(node, ast.Expression):
         return _eval_expr(node.body)
@@ -207,6 +287,8 @@ def can_answer_locally(prompt: str) -> bool:
             _answer_entities(prompt),
             _answer_obvious_sentiment(prompt),
             _answer_static_python_bug(prompt),
+            _answer_ordering_puzzle(prompt),
+            _answer_box_extreme(prompt),
         )
     )
 
@@ -236,6 +318,14 @@ def answer_locally(prompt: str) -> ModelAnswer:
     python_bug = _answer_static_python_bug(prompt)
     if python_bug is not None:
         return ModelAnswer(answer=python_bug, confidence=0.99, tier=Tier.LOCAL)
+
+    ordering = _answer_ordering_puzzle(prompt)
+    if ordering is not None:
+        return ModelAnswer(answer=ordering, confidence=0.99, tier=Tier.LOCAL)
+
+    box_extreme = _answer_box_extreme(prompt)
+    if box_extreme is not None:
+        return ModelAnswer(answer=box_extreme, confidence=0.99, tier=Tier.LOCAL)
 
     if len(prompt.split()) <= 12:
         return ModelAnswer(answer="I need a stronger model for a reliable answer.", confidence=0.25, tier=Tier.LOCAL)
