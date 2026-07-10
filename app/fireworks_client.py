@@ -95,6 +95,7 @@ class FireworksClient:
         messages: Sequence[ChatMessage],
         tier: Tier,
         conversation_id: str = "manual",
+        max_tokens: int | None = None,
     ) -> ModelAnswer:
         if tier not in {Tier.SMALL, Tier.LARGE}:
             raise ValueError("Fireworks tier must be small or large")
@@ -105,11 +106,14 @@ class FireworksClient:
             raise ValueError("messages must end with a user message")
 
         model = self.config.small_model if tier == Tier.SMALL else self.config.large_model
+        token_limit = max_tokens if max_tokens is not None else self.config.max_completion_tokens
+        if token_limit < 16 or token_limit > self.config.max_completion_tokens:
+            raise ValueError("max_tokens must be between 16 and the configured completion cap")
         payload = {
             "model": model,
             "messages": [{"role": "system", "content": SYSTEM_PROMPT}, *messages],
             "temperature": 0,
-            "max_tokens": self.config.max_completion_tokens,
+            "max_tokens": token_limit,
             "prompt_cache_key": conversation_id,
             "perf_metrics_in_response": True,
         }

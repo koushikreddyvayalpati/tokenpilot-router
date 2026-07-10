@@ -10,13 +10,21 @@ class FakeFireworks(FireworksClient):
     def __init__(self) -> None:
         self.calls: list[Tier] = []
         self.requests: list[tuple[list[dict[str, str]], Tier, str]] = []
+        self.token_limits: list[int | None] = []
 
     def cache_scope(self) -> str:
         return "fake-fireworks-v1"
 
-    def complete(self, messages: list[dict[str, str]], tier: Tier, conversation_id: str = "manual") -> ModelAnswer:
+    def complete(
+        self,
+        messages: list[dict[str, str]],
+        tier: Tier,
+        conversation_id: str = "manual",
+        max_tokens: int | None = None,
+    ) -> ModelAnswer:
         self.calls.append(tier)
         self.requests.append((messages, tier, conversation_id))
+        self.token_limits.append(max_tokens)
         if tier == Tier.SMALL:
             return ModelAnswer(answer="maybe", confidence=0.2, tier=tier, token_count=8)
         return ModelAnswer(answer="therefore solved", confidence=0.9, tier=tier, token_count=20)
@@ -40,6 +48,7 @@ def test_escalates_until_confident(tmp_path: Path) -> None:
     assert result["answer"].confidence >= 0.72
     assert result["attempts"] == ["large"]
     assert fake.calls == [Tier.LARGE]
+    assert fake.token_limits == [160]
 
 
 def test_persistent_cache_skips_repeat_paid_call(tmp_path: Path) -> None:

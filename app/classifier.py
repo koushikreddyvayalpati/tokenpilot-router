@@ -39,6 +39,8 @@ LOCAL_CODE_DEBUG_PATTERN = re.compile(
     r"\b(find and explain the bug|what do(?:es)? .* evaluate|what happens when you call|given .*? what does .*? return)\b",
     re.IGNORECASE | re.DOTALL,
 )
+SUMMARY_PATTERN = re.compile(r"\b(?:summari[sz]e|summary)\b", re.IGNORECASE)
+CODE_GENERATION_PATTERN = re.compile(r"\b(?:write|implement)\b.*\b(?:function|class|algorithm)\b", re.IGNORECASE | re.DOTALL)
 
 
 def classify_task(task_text: str) -> RouteDecision:
@@ -100,3 +102,19 @@ def classify_task(task_text: str) -> RouteDecision:
         return RouteDecision(tier=Tier.SMALL, difficulty="medium", reasons=reasons or ["medium signal"])
 
     return RouteDecision(tier=Tier.LOCAL, difficulty="easy", reasons=["short factual/simple task"])
+
+
+def completion_token_budget(task_text: str, tier: Tier) -> int:
+    """Set a tight, task-aware cap without altering the task's wording."""
+    text = task_text.strip()
+    if CODE_GENERATION_PATTERN.search(text):
+        return 260
+    if SUMMARY_PATTERN.search(text):
+        return 110
+    if LOCAL_CODE_DEBUG_PATTERN.search(text):
+        return 100
+    if tier == Tier.LARGE:
+        return 160
+    if tier == Tier.SMALL:
+        return 96
+    return 64

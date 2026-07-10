@@ -32,3 +32,15 @@ def test_cache_scope_changes_with_generation_settings() -> None:
     default = FireworksClient(FireworksConfig(api_key="test-key"))
     shorter = FireworksClient(FireworksConfig(api_key="test-key", max_completion_tokens=200))
     assert default.cache_scope() != shorter.cache_scope()
+
+
+def test_client_allows_a_tighter_task_output_cap() -> None:
+    captured: dict[str, str] = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        captured["body"] = request.content.decode()
+        return httpx.Response(200, json={"choices": [{"message": {"content": "answer"}}], "usage": {}})
+
+    client = FireworksClient(FireworksConfig(api_key="test-key"), httpx.Client(transport=httpx.MockTransport(handler)))
+    client.complete([{"role": "user", "content": "hello"}], Tier.SMALL, max_tokens=96)
+    assert '"max_tokens":96' in captured["body"]

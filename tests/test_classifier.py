@@ -1,4 +1,4 @@
-from app.classifier import classify_task
+from app.classifier import classify_task, completion_token_budget
 from app.models import Tier
 
 
@@ -27,3 +27,9 @@ def test_exactly_once_architecture_goes_large() -> None:
 def test_multi_step_probability_goes_large() -> None:
     prompt = "Three services have independent failure probabilities. Compute the probability at least two are healthy."
     assert classify_task(prompt).tier == Tier.LARGE
+
+
+def test_completion_budget_preserves_space_for_code_and_summaries() -> None:
+    assert completion_token_budget("Write a Python function that merges intervals.", Tier.SMALL) == 260
+    assert completion_token_budget("Summarize this report in two bullets.", Tier.LARGE) == 110
+    assert completion_token_budget("What is inflation?", Tier.SMALL) == 96
