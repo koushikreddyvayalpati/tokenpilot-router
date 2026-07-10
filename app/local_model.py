@@ -83,6 +83,9 @@ def _answer_word_math(prompt: str) -> str | None:
 
 _CAPITALIZED_NAME = r"[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*"
 _DATE = r"(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s*\d{4}"
+_POSITIVE_SENTIMENT = {"amazing", "beautiful", "excellent", "fantastic", "gorgeous", "great", "love", "smooth", "wonderful"}
+_NEGATIVE_SENTIMENT = {"awful", "broken", "crashed", "disappointing", "hate", "poor", "smelled", "terrible", "unresponsive", "worst"}
+_SENTIMENT_AMBIGUITY = re.compile(r"\b(?:not|never|no|n't|but|although|however|sarcasm|oh sure|at least)\b", re.IGNORECASE)
 
 
 def _answer_entities(prompt: str) -> str | None:
@@ -109,6 +112,68 @@ def _answer_entities(prompt: str) -> str | None:
             f"Person: {first_person}, {second_person}; Organization: {first_org}, {second_org}; "
             f"Location: {first_location}, {second_location}."
         )
+    return None
+
+
+def _answer_obvious_sentiment(prompt: str) -> str | None:
+    if not re.search(r"\b(?:classify|label) (?:the )?sentiment\b", prompt, re.IGNORECASE):
+        return None
+    quote = re.search(r'["\u201c](.*?)["\u201d]', prompt, re.DOTALL)
+    if not quote:
+        return None
+    review = quote.group(1).lower()
+    if _SENTIMENT_AMBIGUITY.search(review):
+        return None
+    positive = sum(re.search(rf"\b{re.escape(word)}\b", review) is not None for word in _POSITIVE_SENTIMENT)
+    negative = sum(re.search(rf"\b{re.escape(word)}\b", review) is not None for word in _NEGATIVE_SENTIMENT)
+    if positive >= 2 and negative == 0:
+        return "Positive sentiment: the review expresses clear satisfaction."
+    if negative >= 2 and positive == 0:
+        return "Negative sentiment: the review describes clear dissatisfaction."
+    return None
+
+
+def _python_source(prompt: str) -> str | None:
+    fenced = re.search(r"```(?:python)?\s*(.*?)```", prompt, re.DOTALL | re.IGNORECASE)
+    return fenced.group(1) if fenced else None
+
+
+def _is_mutable_literal(node: ast.AST) -> bool:
+    return isinstance(node, ast.List | ast.Dict | ast.Set)
+
+
+def _answer_static_python_bug(prompt: str) -> str | None:
+    """Identify a small set of AST-defined Python bugs without matching prompt text."""
+    source = _python_source(prompt)
+    if source is None:
+        return None
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return None
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.FunctionDef) and any(_is_mutable_literal(default) for default in node.args.defaults):
+            return "A mutable default argument is shared across calls. Use `None` as the default and create a new value inside the function."
+        if isinstance(node, ast.ClassDef):
+            for statement in node.body:
+                if isinstance(statement, ast.Assign) and _is_mutable_literal(statement.value):
+                    return "A mutable class attribute is shared by every instance. Initialize it on `self` inside `__init__` instead."
+        if isinstance(node, ast.For) and isinstance(node.iter, ast.Call) and isinstance(node.iter.func, ast.Name) and node.iter.func.id == "range":
+            arguments = node.iter.args
+            if (
+                len(arguments) == 2
+                and isinstance(arguments[0], ast.Constant)
+                and arguments[0].value == 1
+                and isinstance(arguments[1], ast.Call)
+                and isinstance(arguments[1].func, ast.Name)
+                and arguments[1].func.id == "len"
+            ):
+                return "The loop starts at index 1, so it skips the first element. Start at 0 or iterate over the values directly."
+        if isinstance(node, ast.ListComp) and isinstance(node.elt, ast.Lambda) and node.generators:
+            target = node.generators[0].target
+            if isinstance(target, ast.Name) and any(isinstance(part, ast.Name) and part.id == target.id for part in ast.walk(node.elt.body)):
+                return "Each lambda captures the loop variable late, so they use its final value. Bind it in a default argument, for example `lambda x, i=i: ...`."
     return None
 
 
@@ -140,6 +205,8 @@ def can_answer_locally(prompt: str) -> bool:
             _extract_math(prompt),
             _answer_word_math(prompt),
             _answer_entities(prompt),
+            _answer_obvious_sentiment(prompt),
+            _answer_static_python_bug(prompt),
         )
     )
 
@@ -161,6 +228,14 @@ def answer_locally(prompt: str) -> ModelAnswer:
     entities = _answer_entities(prompt)
     if entities is not None:
         return ModelAnswer(answer=entities, confidence=0.99, tier=Tier.LOCAL)
+
+    sentiment = _answer_obvious_sentiment(prompt)
+    if sentiment is not None:
+        return ModelAnswer(answer=sentiment, confidence=0.99, tier=Tier.LOCAL)
+
+    python_bug = _answer_static_python_bug(prompt)
+    if python_bug is not None:
+        return ModelAnswer(answer=python_bug, confidence=0.99, tier=Tier.LOCAL)
 
     if len(prompt.split()) <= 12:
         return ModelAnswer(answer="I need a stronger model for a reliable answer.", confidence=0.25, tier=Tier.LOCAL)
