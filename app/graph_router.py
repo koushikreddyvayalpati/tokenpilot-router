@@ -10,11 +10,12 @@ from langgraph.types import CachePolicy
 
 from app.cache import JsonAnswerCache
 from app.conversation import ChatMessage, ConversationMemory
-from app.classifier import classify_task, completion_token_budget
+from app.classifier import classify_task
 from app.confidence import is_good_enough
 from app.fireworks_client import FireworksClient
 from app.local_model import answer_locally
 from app.models import ModelAnswer, RouteDecision, Tier
+from app.output_limits import requested_output_limit
 
 
 class RouterState(TypedDict):
@@ -83,12 +84,11 @@ class LangGraphRouter:
             answer = answer_locally(state["prompt"])
             self.answer_cache.set(cache_key, tier, answer.model_dump(mode="json"))
         else:
-            answer = self.fireworks.complete(
-                state["messages"],
-                tier,
-                state["conversation_id"],
-                max_tokens=completion_token_budget(state["prompt"], tier),
-            )
+            limit = requested_output_limit(state["prompt"])
+            if limit is None:
+                answer = self.fireworks.complete(state["messages"], tier, state["conversation_id"])
+            else:
+                answer = self.fireworks.complete(state["messages"], tier, state["conversation_id"], max_tokens=limit)
             self.answer_cache.set(cache_key, tier, answer.model_dump(mode="json"))
         return {
             "answer": answer,

@@ -48,7 +48,7 @@ def test_escalates_until_confident(tmp_path: Path) -> None:
     assert result["answer"].confidence >= 0.72
     assert result["attempts"] == ["large"]
     assert fake.calls == [Tier.LARGE]
-    assert fake.token_limits == [160]
+    assert fake.token_limits == [None]
 
 
 def test_persistent_cache_skips_repeat_paid_call(tmp_path: Path) -> None:
@@ -60,7 +60,7 @@ def test_persistent_cache_skips_repeat_paid_call(tmp_path: Path) -> None:
     second = LangGraphRouter(fake, cache).run(prompt)
     assert first["answer"].tier == Tier.LARGE
     assert second["answer"].cache_hit is True
-    assert fake.calls == [Tier.LARGE]
+    assert fake.calls == [Tier.SMALL, Tier.LARGE]
 
 
 def test_follow_up_receives_prior_long_context(tmp_path: Path) -> None:
