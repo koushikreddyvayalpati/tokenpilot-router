@@ -8,6 +8,7 @@ from typing import Any
 from app.cache import JsonAnswerCache
 from app.fireworks_client import FireworksClient, FireworksConfig
 from app.graph_router import LangGraphRouter
+from app.local_model import answer_locally
 
 INPUT_PATH = Path("/input/tasks.json")
 OUTPUT_PATH = Path("/output/results.json")
@@ -42,8 +43,13 @@ def run_batch(input_path: Path, output_path: Path, router: LangGraphRouter) -> l
     tasks = _tasks_from_payload(json.loads(input_path.read_text()))
     results: list[dict[str, str]] = []
     for task in tasks:
-        state = router.run(task["prompt"], task_id=task["task_id"], conversation_id=f"task:{task['task_id']}")
-        results.append({"task_id": task["task_id"], "answer": state["answer"].answer})
+        try:
+            state = router.run(task["prompt"], task_id=task["task_id"], conversation_id=f"task:{task['task_id']}")
+            answer = state["answer"].answer
+        except Exception:
+            # A single upstream model error must not discard already completed tasks.
+            answer = answer_locally(task["prompt"]).answer
+        results.append({"task_id": task["task_id"], "answer": answer})
     _atomic_json_write(output_path, results)
     return results
 

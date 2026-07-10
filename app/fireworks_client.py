@@ -109,9 +109,7 @@ class FireworksClient:
             "model": model,
             "messages": [{"role": "system", "content": SYSTEM_PROMPT}, *messages],
             "temperature": 0,
-            "max_completion_tokens": self.config.max_completion_tokens,
-            "prompt_truncate_len": self.config.prompt_truncate_len,
-            "reasoning_effort": self.config.reasoning_effort,
+            "max_tokens": self.config.max_completion_tokens,
             "prompt_cache_key": conversation_id,
             "perf_metrics_in_response": True,
         }

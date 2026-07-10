@@ -9,7 +9,7 @@ def test_client_uses_conversation_affinity_and_reports_cache_metrics() -> None:
         body = request.content.decode()
         assert request.headers["x-session-affinity"] == "chat-42"
         assert '"prompt_cache_key":"chat-42"' in body
-        assert '"reasoning_effort":"low"' in body
+        assert '"max_tokens":400' in body
         return httpx.Response(
             200,
             json={
