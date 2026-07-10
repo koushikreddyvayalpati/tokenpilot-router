@@ -12,9 +12,7 @@ class ChatMessage(TypedDict):
 
 
 SYSTEM_PROMPT = (
-    "Return the final answer first and keep the entire response under 180 words. Do not use headings, "
-    "an introduction, a restatement, a self-test, optional examples, or closing remarks. For derivations, "
-    "show only the essential equations. For code, provide only the minimal working implementation."
+    "Answer accurately. Follow the requested format exactly. Be concise."
 )
 
 

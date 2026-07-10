@@ -29,6 +29,16 @@ LOGIC_PATTERN = re.compile(
     r"\b(logic|deduc(?:e|tive)|constraint|puzzle|each (?:person|friend)|who owns|which (?:one|person))\b",
     re.IGNORECASE,
 )
+LOCAL_WORD_MATH_PATTERN = re.compile(
+    r"\b(discount|sales tax|tank starts|drains? at|refilled at|pipes? .* fill|invest .* year|grows by|shrinks by)\b",
+    re.IGNORECASE,
+)
+SENTIMENT_PATTERN = re.compile(r"\b(classify|label) (?:the )?sentiment\b", re.IGNORECASE)
+NER_PATTERN = re.compile(r"\bextract (?:all )?named entities\b", re.IGNORECASE)
+LOCAL_CODE_DEBUG_PATTERN = re.compile(
+    r"\b(find and explain the bug|what do(?:es)? .* evaluate|what happens when you call|given .*? what does .*? return)\b",
+    re.IGNORECASE | re.DOTALL,
+)
 
 
 def classify_task(task_text: str) -> RouteDecision:
@@ -38,6 +48,14 @@ def classify_task(task_text: str) -> RouteDecision:
 
     if ARITHMETIC_PATTERN.match(text) and len(text) <= 80:
         return RouteDecision(tier=Tier.LOCAL, difficulty="easy", reasons=["deterministic arithmetic"])
+    if LOCAL_WORD_MATH_PATTERN.search(text):
+        return RouteDecision(tier=Tier.LOCAL, difficulty="easy", reasons=["structured word math"])
+    if SENTIMENT_PATTERN.search(text):
+        return RouteDecision(tier=Tier.LOCAL, difficulty="easy", reasons=["sentiment classification"])
+    if NER_PATTERN.search(text):
+        return RouteDecision(tier=Tier.LOCAL, difficulty="easy", reasons=["named entity extraction"])
+    if LOCAL_CODE_DEBUG_PATTERN.search(text):
+        return RouteDecision(tier=Tier.LOCAL, difficulty="easy", reasons=["deterministic code semantics"])
 
     if PROOF_PATTERN.search(text):
         reasons.append("formal reasoning keyword")
