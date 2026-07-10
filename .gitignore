@@ -2,6 +2,7 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .router-cache/
+models/
 .venv/
 deck-preview/
 pdf-export/
