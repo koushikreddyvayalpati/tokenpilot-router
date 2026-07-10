@@ -56,17 +56,30 @@ def classify_task(task_text: str) -> RouteDecision:
     if LOCAL_WORD_MATH_PATTERN.search(text):
         return RouteDecision(tier=Tier.LOCAL, difficulty="easy", reasons=["structured word math"])
 
-    # Accuracy-gate profile: only deterministic calculations remain local.
+    if (
+        PROOF_PATTERN.search(text)
+        or HARD_SYSTEM_PATTERN.search(text)
+        or QUANTITATIVE_REASONING_PATTERN.search(text)
+        or LOGIC_PATTERN.search(text)
+        or "adversarial" in lowered
+        or (CODE_PATTERN.search(text) and COMPLEX_PATTERN.search(text))
+    ):
+        return RouteDecision(tier=Tier.LARGE, difficulty="hard", reasons=["hard correctness signal"])
+
+    # Balanced profile: preserve accuracy by keeping ambiguous tasks on Fireworks,
+    # while reserving the strongest tier for code generation and logic.
     if SUMMARY_PATTERN.search(text):
-        return RouteDecision(tier=Tier.LARGE, difficulty="hard", reasons=["format-sensitive summarization"])
+        return RouteDecision(tier=Tier.SMALL, difficulty="medium", reasons=["format-sensitive summarization"])
     if SENTIMENT_PATTERN.search(text):
-        return RouteDecision(tier=Tier.LARGE, difficulty="hard", reasons=["sentiment nuance"])
+        return RouteDecision(tier=Tier.SMALL, difficulty="medium", reasons=["sentiment nuance"])
     if NER_PATTERN.search(text):
-        return RouteDecision(tier=Tier.LARGE, difficulty="hard", reasons=["entity typing"])
-    if CODE_PATTERN.search(text) or LOCAL_CODE_DEBUG_PATTERN.search(text):
+        return RouteDecision(tier=Tier.SMALL, difficulty="medium", reasons=["entity typing"])
+    if CODE_GENERATION_PATTERN.search(text):
         return RouteDecision(tier=Tier.LARGE, difficulty="hard", reasons=["code correctness"])
+    if CODE_PATTERN.search(text) or LOCAL_CODE_DEBUG_PATTERN.search(text):
+        return RouteDecision(tier=Tier.SMALL, difficulty="medium", reasons=["code correctness"])
     if FACTUAL_PATTERN.search(text):
-        return RouteDecision(tier=Tier.LARGE, difficulty="hard", reasons=["factual accuracy"])
+        return RouteDecision(tier=Tier.SMALL, difficulty="medium", reasons=["factual accuracy"])
 
     if PROOF_PATTERN.search(text):
         reasons.append("formal reasoning keyword")

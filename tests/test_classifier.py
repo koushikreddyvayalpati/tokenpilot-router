@@ -29,10 +29,10 @@ def test_multi_step_probability_goes_large() -> None:
     assert classify_task(prompt).tier == Tier.LARGE
 
 
-def test_accuracy_profile_sends_ambiguous_categories_to_large() -> None:
-    assert classify_task('Classify the sentiment: "Great, another outage."').tier == Tier.LARGE
-    assert classify_task('Extract all named entities from: "Noor joined Solace Health."').tier == Tier.LARGE
-    assert classify_task("Explain inflation in one sentence.").tier == Tier.LARGE
+def test_balanced_profile_sends_ambiguous_categories_to_small() -> None:
+    assert classify_task('Classify the sentiment: "Great, another outage."').tier == Tier.SMALL
+    assert classify_task('Extract all named entities from: "Noor joined Solace Health."').tier == Tier.SMALL
+    assert classify_task("Explain inflation in one sentence.").tier == Tier.SMALL
 
 
 def test_constraint_puzzles_route_large() -> None:
