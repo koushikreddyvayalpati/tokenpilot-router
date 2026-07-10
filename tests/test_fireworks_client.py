@@ -47,6 +47,20 @@ def test_client_allows_a_tighter_task_output_cap() -> None:
     assert '"max_tokens":96' in captured["body"]
 
 
+def test_minimax_general_tier_disables_optional_thinking() -> None:
+    captured: dict[str, str] = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        captured["body"] = request.content.decode()
+        return httpx.Response(200, json={"choices": [{"message": {"content": "answer"}}], "usage": {}})
+
+    config = FireworksConfig(api_key="test-key", small_model="accounts/fireworks/models/minimax-m3")
+    client = FireworksClient(config, httpx.Client(transport=httpx.MockTransport(handler)))
+    client.complete([{"role": "user", "content": "hello"}], Tier.SMALL)
+
+    assert '"reasoning_effort":"none"' in captured["body"]
+
+
 def test_client_retries_a_truncated_concise_answer_at_full_budget() -> None:
     token_limits: list[int] = []
 

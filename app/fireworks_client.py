@@ -117,6 +117,10 @@ class FireworksClient:
             "prompt_cache_key": conversation_id,
             "perf_metrics_in_response": True,
         }
+        # M3's optional thinking can consume the full completion budget before it
+        # produces a short task answer. Keep it off for the general-purpose tier.
+        if "minimax-m3" in model.lower():
+            payload["reasoning_effort"] = "none"
         response = self._post_with_retry(payload, conversation_id)
         response_payload: dict[str, Any] = response.json()
         initial_usage = response_payload.get("usage", {})
