@@ -25,6 +25,10 @@ QUANTITATIVE_REASONING_PATTERN = re.compile(
     r"\b(probabilit(?:y|ies)|independent events?|at least \w+ (?:are )?healthy|expected value|combinatorics?)\b",
     re.IGNORECASE,
 )
+LOGIC_PATTERN = re.compile(
+    r"\b(logic|deduc(?:e|tive)|constraint|puzzle|each (?:person|friend)|who owns|which (?:one|person))\b",
+    re.IGNORECASE,
+)
 
 
 def classify_task(task_text: str) -> RouteDecision:
@@ -45,6 +49,8 @@ def classify_task(task_text: str) -> RouteDecision:
         reasons.append("high-risk systems keyword")
     if QUANTITATIVE_REASONING_PATTERN.search(text):
         reasons.append("multi-step quantitative reasoning")
+    if LOGIC_PATTERN.search(text):
+        reasons.append("constraint reasoning")
     if len(text.split()) > 45:
         reasons.append("long prompt")
     if any(mark in lowered for mark in ["do not use", "ignore previous", "system prompt"]):
@@ -58,6 +64,7 @@ def classify_task(task_text: str) -> RouteDecision:
             "adversarial" in lowered,
             bool(HARD_SYSTEM_PATTERN.search(text)),
             bool(QUANTITATIVE_REASONING_PATTERN.search(text)),
+            bool(LOGIC_PATTERN.search(text)),
         ]
     )
     if hard_signals:

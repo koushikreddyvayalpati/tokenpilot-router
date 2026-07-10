@@ -3,7 +3,6 @@ from __future__ import annotations
 import ast
 import operator
 
-from app.confidence import score_answer
 from app.models import ModelAnswer, Tier
 
 OPS = {
@@ -54,5 +53,5 @@ def answer_locally(prompt: str) -> ModelAnswer:
         return ModelAnswer(answer=answer, confidence=0.25, tier=Tier.LOCAL)
 
     answer = "Local model abstained because the task appears open-ended."
-    return ModelAnswer(answer=answer, confidence=score_answer(answer), tier=Tier.LOCAL)
-
+    # Abstentions must always escalate to a permitted Fireworks model.
+    return ModelAnswer(answer=answer, confidence=0.0, tier=Tier.LOCAL)
