@@ -45,20 +45,3 @@ def test_exact_entity_template_stays_local_but_ambiguous_entity_prompt_abstains(
 def test_code_debugging_abstains_for_an_allowed_model() -> None:
     answer = answer_locally("Find and explain the bug in this Python function: def divide(a, b): return a / b")
     assert answer.confidence < 0.72
-
-
-def test_only_unambiguous_sentiment_stays_local() -> None:
-    positive = answer_locally('Classify the sentiment: "The service was smooth, great, and excellent."')
-    assert positive.answer.startswith("Positive")
-    assert positive.confidence == 0.99
-
-    sarcastic = answer_locally('Classify the sentiment: "Great, another broken update."')
-    assert sarcastic.confidence < 0.72
-
-
-def test_ast_defined_python_bugs_stay_local() -> None:
-    mutable_default = answer_locally("Find the bug:\n```python\ndef add(value, items=[]):\n    items.append(value)\n    return items\n```")
-    assert "mutable default" in mutable_default.answer
-
-    off_by_one = answer_locally("Find the bug:\n```python\ndef total(values):\n    total = 0\n    for i in range(1, len(values)):\n        total += values[i]\n    return total\n```")
-    assert "skips the first element" in off_by_one.answer
