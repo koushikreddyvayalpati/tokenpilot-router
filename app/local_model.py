@@ -112,36 +112,6 @@ def _answer_entities(prompt: str) -> str | None:
     return None
 
 
-def _answer_known_python_semantics(prompt: str) -> str | None:
-    """Handle exact, closed Python examples. Anything novel must reach Fireworks."""
-    lowered = prompt.lower()
-    if "n % 2 == 1" in prompt and "def is_even" in prompt:
-        return "The condition is inverted: it returns True for odd values. Use `return n % 2 == 0`."
-    if "if g == []" in prompt and "def report" in prompt:
-        return "The filter keeps only empty groups, so useful groups are skipped. Filter non-empty groups, for example `if g`."
-    if "items != none" in lowered and "def safe_first" in prompt:
-        return "An empty list is not None, so `items[0]` can still fail. Use `return get_first(items) if items else None`."
-    if "class counter" in lowered and "counts = {}" in prompt:
-        return "`counts` is a shared class attribute. Initialize `self.counts = {}` inside `__init__` for per-instance state."
-    if "max_val = 0" in prompt and "def find_max" in prompt:
-        return "Initializing to 0 fails when every value is negative. Initialize with `nums[0]` after handling an empty list."
-    if "range(1, len(nums))" in prompt and "def total" in prompt:
-        return "The loop skips index 0, so the first value is omitted. Use `for i in range(len(nums)):`."
-    if "def dedupe_preserve_order" in prompt and "seen.add(item)" in prompt:
-        return "There is no bug for hashable items: it preserves first-seen order while removing duplicates."
-    if "bucket=[]" in prompt and "def add_item" in prompt:
-        return "The mutable default list is shared across calls. Use `bucket=None`, then create a new list when it is None."
-    if "lambda x: x * i for i in range(1, 4)" in prompt and "m(10)" in prompt:
-        return "`results` is `[30, 30, 30]` because each lambda captures the final `i`, 3. Bind it with `lambda x, i=i: x * i`."
-    if "return (n for n in nums if n % 2 == 0)" in prompt and "total1 = sum(evens)" in prompt:
-        return "`total1` is 12 and `total2` is 0 because the generator is exhausted after the first sum."
-    if "total == 0.3" in prompt and "prices = [0.1, 0.2]" in prompt:
-        return "It returns False because binary floating point cannot represent the sum exactly; compare with `math.isclose`."
-    if "def factorial(n):" in prompt and "if n == 1" in prompt and "factorial(0)" in prompt:
-        return "It recurses until a RecursionError because 0 is not a base case. Use `if n <= 1: return 1`."
-    return None
-
-
 def _eval_expr(node: ast.AST) -> float:
     if isinstance(node, ast.Expression):
         return _eval_expr(node.body)
@@ -163,14 +133,13 @@ def _extract_math(prompt: str) -> str | None:
 
 
 def can_answer_locally(prompt: str) -> bool:
-    """Return true only when the prompt matches a fully deterministic math form."""
+    """Return true only when the prompt can be calculated or extracted generically."""
     return any(
         answer is not None
         for answer in (
             _extract_math(prompt),
             _answer_word_math(prompt),
             _answer_entities(prompt),
-            _answer_known_python_semantics(prompt),
         )
     )
 
@@ -192,10 +161,6 @@ def answer_locally(prompt: str) -> ModelAnswer:
     entities = _answer_entities(prompt)
     if entities is not None:
         return ModelAnswer(answer=entities, confidence=0.99, tier=Tier.LOCAL)
-
-    known_python = _answer_known_python_semantics(prompt)
-    if known_python is not None:
-        return ModelAnswer(answer=known_python, confidence=0.99, tier=Tier.LOCAL)
 
     if len(prompt.split()) <= 12:
         return ModelAnswer(answer="I need a stronger model for a reliable answer.", confidence=0.25, tier=Tier.LOCAL)

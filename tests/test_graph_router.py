@@ -48,7 +48,7 @@ def test_escalates_until_confident(tmp_path: Path) -> None:
     assert result["answer"].confidence >= 0.72
     assert result["attempts"] == ["large"]
     assert fake.calls == [Tier.LARGE]
-    assert fake.token_limits == [160]
+    assert fake.token_limits == [320]
 
 
 def test_persistent_cache_skips_repeat_paid_call(tmp_path: Path) -> None:

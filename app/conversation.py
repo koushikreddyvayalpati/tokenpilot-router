@@ -12,8 +12,7 @@ class ChatMessage(TypedDict):
 
 
 SYSTEM_PROMPT = (
-    "Answer directly and accurately. Follow the requested format and length. Be concise; do not restate the prompt. "
-    "For code, return only minimal working code."
+    "Answer only. Follow the requested format. No headings or preamble. Be concise. For code, return code only."
 )
 
 

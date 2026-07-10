@@ -42,13 +42,6 @@ def test_exact_entity_template_stays_local_but_ambiguous_entity_prompt_abstains(
     assert ambiguous.confidence < 0.72
 
 
-def test_exact_python_semantics_stays_local_but_unknown_code_abstains() -> None:
-    answer = answer_locally(
-        "What happens when you call `factorial(0)` with this code?\n"
-        "def factorial(n):\n    if n == 1:\n        return 1\n    return n * factorial(n - 1)"
-    )
-    assert "RecursionError" in answer.answer
-    assert answer.confidence == 0.99
-
-    unknown = answer_locally("Find and explain the bug in this Python function: def divide(a, b): return a / b")
-    assert unknown.confidence < 0.72
+def test_code_debugging_abstains_for_an_allowed_model() -> None:
+    answer = answer_locally("Find and explain the bug in this Python function: def divide(a, b): return a / b")
+    assert answer.confidence < 0.72

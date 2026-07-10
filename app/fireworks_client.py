@@ -25,7 +25,7 @@ class FireworksConfig:
     max_completion_tokens: int = 400
     prompt_truncate_len: int = 8_000
     max_retries: int = 2
-    reasoning_effort: str = "low"
+    reasoning_effort: str | None = "none"
 
     @classmethod
     def from_environment(cls) -> "FireworksConfig":
@@ -119,8 +119,8 @@ class FireworksClient:
         }
         # M3's optional thinking can consume the full completion budget before it
         # produces a short task answer. Keep it off for the general-purpose tier.
-        if "minimax-m3" in model.lower():
-            payload["reasoning_effort"] = "none"
+        if "minimax-m3" in model.lower() and self.config.reasoning_effort is not None:
+            payload["reasoning_effort"] = self.config.reasoning_effort
         response = self._post_with_retry(payload, conversation_id)
         response_payload: dict[str, Any] = response.json()
         initial_usage = response_payload.get("usage", {})

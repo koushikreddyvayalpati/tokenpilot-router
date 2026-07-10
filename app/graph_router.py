@@ -85,6 +85,10 @@ class LangGraphRouter:
             self.answer_cache.set(cache_key, tier, answer.model_dump(mode="json"))
         else:
             limit = requested_output_limit(state["prompt"])
+            # Kimi is reserved for logic and other hard work. A single adequate
+            # completion is cheaper than a short attempt followed by a retry.
+            if tier == Tier.LARGE:
+                limit = max(limit or 0, 320)
             if limit is None:
                 answer = self.fireworks.complete(state["messages"], tier, state["conversation_id"])
             else:
