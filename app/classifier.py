@@ -26,7 +26,9 @@ QUANTITATIVE_REASONING_PATTERN = re.compile(
     re.IGNORECASE,
 )
 LOGIC_PATTERN = re.compile(
-    r"\b(logic|deduc(?:e|tive)|constraint|puzzle|each (?:person|friend)|who owns|which (?:one|person))\b",
+    r"\b(logic|deduc(?:e|tive)|constraint|puzzle|each (?:person|friend|student|colleague|coworker|box|house|runner)|"
+    r"who owns|which (?:one|person)|(?:box(?:es)?|houses?|runners?|coworkers?|colleagues?|students?)\b.*?"
+    r"(?:heavier|lighter|different|each|row|finished))\b",
     re.IGNORECASE,
 )
 LOCAL_WORD_MATH_PATTERN = re.compile(
@@ -41,6 +43,7 @@ LOCAL_CODE_DEBUG_PATTERN = re.compile(
 )
 SUMMARY_PATTERN = re.compile(r"\b(?:summari[sz]e|summary)\b", re.IGNORECASE)
 CODE_GENERATION_PATTERN = re.compile(r"\b(?:write|implement)\b.*\b(?:function|class|algorithm)\b", re.IGNORECASE | re.DOTALL)
+FACTUAL_PATTERN = re.compile(r"\b(?:what is|what are|explain|define|describe)\b", re.IGNORECASE)
 
 
 def classify_task(task_text: str) -> RouteDecision:
@@ -52,12 +55,18 @@ def classify_task(task_text: str) -> RouteDecision:
         return RouteDecision(tier=Tier.LOCAL, difficulty="easy", reasons=["deterministic arithmetic"])
     if LOCAL_WORD_MATH_PATTERN.search(text):
         return RouteDecision(tier=Tier.LOCAL, difficulty="easy", reasons=["structured word math"])
+
+    # Accuracy-gate profile: only deterministic calculations remain local.
+    if SUMMARY_PATTERN.search(text):
+        return RouteDecision(tier=Tier.LARGE, difficulty="hard", reasons=["format-sensitive summarization"])
     if SENTIMENT_PATTERN.search(text):
-        return RouteDecision(tier=Tier.LOCAL, difficulty="easy", reasons=["sentiment classification"])
+        return RouteDecision(tier=Tier.LARGE, difficulty="hard", reasons=["sentiment nuance"])
     if NER_PATTERN.search(text):
-        return RouteDecision(tier=Tier.LOCAL, difficulty="easy", reasons=["named entity extraction"])
-    if LOCAL_CODE_DEBUG_PATTERN.search(text):
-        return RouteDecision(tier=Tier.LOCAL, difficulty="easy", reasons=["deterministic code semantics"])
+        return RouteDecision(tier=Tier.LARGE, difficulty="hard", reasons=["entity typing"])
+    if CODE_PATTERN.search(text) or LOCAL_CODE_DEBUG_PATTERN.search(text):
+        return RouteDecision(tier=Tier.LARGE, difficulty="hard", reasons=["code correctness"])
+    if FACTUAL_PATTERN.search(text):
+        return RouteDecision(tier=Tier.LARGE, difficulty="hard", reasons=["factual accuracy"])
 
     if PROOF_PATTERN.search(text):
         reasons.append("formal reasoning keyword")

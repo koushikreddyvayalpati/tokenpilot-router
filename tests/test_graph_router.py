@@ -60,7 +60,7 @@ def test_persistent_cache_skips_repeat_paid_call(tmp_path: Path) -> None:
     second = LangGraphRouter(fake, cache).run(prompt)
     assert first["answer"].tier == Tier.LARGE
     assert second["answer"].cache_hit is True
-    assert fake.calls == [Tier.SMALL, Tier.LARGE]
+    assert fake.calls == [Tier.LARGE]
 
 
 def test_follow_up_receives_prior_long_context(tmp_path: Path) -> None:
